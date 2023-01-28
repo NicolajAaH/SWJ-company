@@ -1,5 +1,6 @@
 package dk.sdu.mmmi.companyservice.service.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -7,9 +8,11 @@ import lombok.ToString;
 import java.util.Date;
 
 @Getter
+@Entity
 @Setter
 @ToString
 public class Job {
+    @Id
     private Long id;
 
     private String title;
@@ -28,6 +31,7 @@ public class Job {
 
     private Date expiresAt;
 
+    @ManyToOne(optional = false)
     private Company company;
 
 }

@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "companies")
@@ -32,4 +32,8 @@ public class Company {
 
     @Column(name = "updated_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
     private Date updatedAt;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<Job> jobs;
 }

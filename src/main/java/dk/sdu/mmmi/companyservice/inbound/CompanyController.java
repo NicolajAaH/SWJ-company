@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
 
 @RestController
@@ -22,6 +23,18 @@ public class CompanyController {
     private final CompanyService companyService;
 
     private final JobService jobService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Company> getCompany(@PathVariable("id") long id) {
+        log.info("Get company: " + id);
+        Company company = companyService.findById(id);
+
+        if (company == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        company.setJobs(new HashSet<>(jobService.getJobsByCompanyId(id)));
+        return new ResponseEntity<>(company, HttpStatus.OK);
+    }
 
     @PostMapping("/register")
     public void registerCompany(@RequestBody Company company) {
@@ -42,9 +55,9 @@ public class CompanyController {
     }
 
     @PostMapping("/postjob")
-    public void postJob(@RequestBody Job job) {
+    public Job postJob(@RequestBody Job job) {
         log.info("Job posted: " + job);
-        jobService.createJob(job);
+        return jobService.createJob(job);
     }
 
     @PutMapping("/{id}")

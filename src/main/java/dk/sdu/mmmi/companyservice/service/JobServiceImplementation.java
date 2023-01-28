@@ -2,16 +2,16 @@ package dk.sdu.mmmi.companyservice.service;
 
 import dk.sdu.mmmi.companyservice.service.interfaces.JobService;
 import dk.sdu.mmmi.companyservice.service.model.Job;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,6 @@ public class JobServiceImplementation implements JobService {
     @Override
     public Job createJob(Job job) {
         log.info("--> createJob: {}", job);
-        System.out.println(JOB_SERVICE_URL);
         ResponseEntity<Job> response = restTemplate.postForEntity(JOB_SERVICE_URL, job, Job.class);
         if(!response.getStatusCode().is2xxSuccessful()){
             log.error("Error creating job: {}", response.getStatusCode());
@@ -64,6 +63,17 @@ public class JobServiceImplementation implements JobService {
         if(!response.getStatusCode().is2xxSuccessful()){
             log.error("Error deleting job: {}", response.getStatusCode());
         }
+    }
+
+    @Override
+    public List<Job> getJobsByCompanyId(long id) {
+        log.info("--> getJobsByCompanyId: {}", id);
+        ResponseEntity<Job[]> response = restTemplate.getForEntity(JOB_SERVICE_URL + "/companies/" + id, Job[].class);
+        if(!response.getStatusCode().is2xxSuccessful()){
+            log.error("Error getting jobs: {}", response.getStatusCode());
+            return null;
+        }
+        return List.of(response.getBody());
     }
 
 }
