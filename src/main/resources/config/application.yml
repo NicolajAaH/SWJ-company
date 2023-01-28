@@ -7,14 +7,14 @@ spring:
     password: java
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     defer-datasource-initialization: true
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-        default_schema: local
+        default_schema: public
 url:
   jobservice: http://localhost:8080/api/jobs
 
@@ -26,4 +26,4 @@ logging:
         sql: info
 
 server:
-  port: 8080
+  port: 8081
