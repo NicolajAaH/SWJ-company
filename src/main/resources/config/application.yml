@@ -17,6 +17,7 @@ spring:
         default_schema: public
 url:
   jobservice: http://localhost:8080/api/jobs
+  authenticationservice: http://localhost:3000
 
 #LOGGING CONFIGURATION
 logging:

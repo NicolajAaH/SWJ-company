@@ -1,5 +1,6 @@
 package dk.sdu.mmmi.companyservice.inbound;
 
+import dk.sdu.mmmi.companyservice.service.interfaces.AuthenticationService;
 import dk.sdu.mmmi.companyservice.service.interfaces.CompanyService;
 import dk.sdu.mmmi.companyservice.service.interfaces.JobService;
 import dk.sdu.mmmi.companyservice.service.model.Company;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/companies")
@@ -23,6 +23,8 @@ public class CompanyController {
     private final CompanyService companyService;
 
     private final JobService jobService;
+
+    private final AuthenticationService authenticationService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Company> getCompany(@PathVariable("id") long id) {
@@ -45,13 +47,13 @@ public class CompanyController {
     @PostMapping("/login")
     public void login(@RequestBody LoginRequest loginRequest) {
         log.info("Company logged in: " + loginRequest);
-        //call authentication service
+        authenticationService.login(loginRequest);
     }
 
     @PostMapping("/logout")
     public void logout(@RequestBody LogoutRequest logoutRequest) {
         log.info("Company logged out: " + logoutRequest);
-        //call authentication service
+        authenticationService.logout(logoutRequest);
     }
 
     @PostMapping("/postjob")
