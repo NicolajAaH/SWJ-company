@@ -16,4 +16,5 @@ public interface DatabaseService {
 
     void deleteCompany(Long id);
 
+    Company findCompanyByEmail(String email);
 }

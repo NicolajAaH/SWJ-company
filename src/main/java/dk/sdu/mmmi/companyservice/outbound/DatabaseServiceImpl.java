@@ -40,4 +40,9 @@ public class DatabaseServiceImpl implements DatabaseService {
         companyRepository.deleteById(id);
     }
 
+    @Override
+    public Company findCompanyByEmail(String email) {
+        return companyRepository.findByEmail(email);
+    }
+
 }

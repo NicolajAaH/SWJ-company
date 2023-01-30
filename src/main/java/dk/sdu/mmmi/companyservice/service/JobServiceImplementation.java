@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -73,6 +74,10 @@ public class JobServiceImplementation implements JobService {
             log.error("Error getting jobs: {}", response.getStatusCode());
             return null;
         }
+
+        if(response.getBody() == null || response.getBody().length == 0)
+            return Collections.emptyList();
+
         return List.of(response.getBody());
     }
 
