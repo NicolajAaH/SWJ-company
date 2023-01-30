@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/companies")
@@ -46,7 +47,11 @@ public class CompanyController {
         if (company == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        company.setJobs(new HashSet<>(jobService.getJobsByCompanyId(company.getId())));
+        List<Job> jobList = jobService.getJobsByCompanyId(company.getId());
+        if(jobList == null || jobList.isEmpty())
+            company.setJobs(new HashSet<>());
+        else
+            company.setJobs(new HashSet<>(jobList));
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
