@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: company-service
-          image: nicolajh/company-service
+          image: nicolajh/swj-company
           ports:
             - containerPort: 8080
           env:
