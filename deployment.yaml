@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-initdb-config
+data:
+  init.sql: |
+    ALTER USER postgres PASSWORD 'password';
+    CREATE TABLE companies
+    (
+        id          SERIAL PRIMARY KEY,
+        name        VARCHAR(255)   NOT NULL,
+        website     VARCHAR(255)   NOT NULL,
+        email       VARCHAR(255)   NOT NULL,
+        created_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
+        UNIQUE (name)
+    );
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: company-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: company-service
+  template:
+    metadata:
+      labels:
+        app: company-service
+    spec:
+      containers:
+        - name: company-service
+          image: nicolajh/company-service
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://database-company-service:5432/postgres
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_HOST
+              value: postgres
+            - name: URL_JOBSERVICE
+              value: http://job-service:8080/api/jobs
+            - name: URL_AUTHENTICATIONSERVICE
+              value: http://authentication-service:3000
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: database-company-service
+spec:
+  serviceName: database-company-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database-company-service
+  template:
+    metadata:
+      labels:
+        app: database-company-service
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: postgres
+          image: postgres:latest
+          volumeMounts:
+            - name: postgresql-initdb
+              mountPath: /docker-entrypoint-initdb.d
+            - name: postgres-persistent-storage
+              mountPath: /data
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: postgres
+            - name: PGDATA
+              value: /data/pgdata
+          ports:
+            - containerPort: 5432
+      volumes:
+        - name: postgresql-initdb
+          configMap:
+            name: postgresql-initdb-config
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-persistent-storage
+      annotations:
+        volume.beta.kubernetes.io/storage-class: "standard"
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-company-service
+spec:
+  selector:
+    app: database-company-service
+  ports:
+    - name: http
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: company-service
+spec:
+  selector:
+    app: company-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
