@@ -61,19 +61,6 @@ public class CompanyController {
         companyService.create(company);
     }
 
-    @PostMapping("/login")
-    public void login(@RequestBody LoginRequest loginRequest) {
-        log.info("Company logged in: " + loginRequest);
-        authenticationService.login(loginRequest);
-    }
-
-    @PostMapping("/logout")
-    public void logout(@RequestBody LogoutRequest logoutRequest) {
-        log.info("Company logged out: " + logoutRequest);
-        authenticationService.logout(logoutRequest);
-    }
-
-
     @PutMapping("/{id}")
     public void updateCompany(@RequestBody Company company, @PathVariable Long id) {
         log.info("Company updated: " + company);
