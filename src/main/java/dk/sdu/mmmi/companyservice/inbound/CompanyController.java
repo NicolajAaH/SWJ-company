@@ -56,11 +56,11 @@ public class CompanyController {
     }
 
     @PutMapping("/byEmail/{email}")
-    public ResponseEntity<Void> updateCompany(@PathVariable("email") String email) {
+    public ResponseEntity<Void> updateCompany(@PathVariable("email") String email, @RequestBody Company company) {
         log.info("Update company: " + email);
-        Company company = companyService.findByEmail(email);
+        Company originalCompany = companyService.findByEmail(email);
 
-        if (company == null) {
+        if (originalCompany == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         companyService.update(company.getId(), company);
