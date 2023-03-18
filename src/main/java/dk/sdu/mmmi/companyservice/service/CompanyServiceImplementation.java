@@ -39,6 +39,7 @@ public class CompanyServiceImplementation implements CompanyService {
     public Company update(Long id, Company company) {
         log.info("--> update: {}", company);
         company.setUpdatedAt(new Date());
+        company.setId(id);
         return databaseService.updateCompany(id, company);
     }
 
