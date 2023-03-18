@@ -63,7 +63,7 @@ public class CompanyController {
         if (originalCompany == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        companyService.update(company.getId(), company);
+        companyService.update(originalCompany.getId(), company);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
