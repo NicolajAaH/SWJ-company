@@ -55,6 +55,18 @@ public class CompanyController {
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
+    @PutMapping("/byEmail/{email}")
+    public ResponseEntity<Void> updateCompany(@PathVariable("email") String email) {
+        log.info("Update company: " + email);
+        Company company = companyService.findByEmail(email);
+
+        if (company == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        companyService.update(company.getId(), company);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("/register")
     public void registerCompany(@RequestBody Company company) {
         log.info("Company registered: " + company);

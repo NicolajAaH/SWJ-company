@@ -33,7 +33,7 @@ public class Company {
     @Column(name = "created_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
     private Date createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
+    @Column(name = "updated_at", columnDefinition = "timestamp default now()", insertable = false, nullable = false)
     private Date updatedAt;
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
