@@ -1,4 +1,4 @@
-package dk.sdu.mmmi.companyservice.service;
+package dk.sdu.mmmi.companyservice.outbound;
 
 import dk.sdu.mmmi.companyservice.service.interfaces.JobService;
 import dk.sdu.mmmi.companyservice.service.model.Job;
