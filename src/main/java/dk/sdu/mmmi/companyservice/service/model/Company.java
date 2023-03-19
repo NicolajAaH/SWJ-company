@@ -27,10 +27,13 @@ public class Company {
     @Column(name = "website", nullable = false)
     private String website;
 
+    @Column(name = "phone", nullable = false)
+    private Integer phone;
+
     @Column(name = "created_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
     private Date createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
+    @Column(name = "updated_at", columnDefinition = "timestamp default now()", insertable = false, nullable = false)
     private Date updatedAt;
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)

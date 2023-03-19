@@ -28,6 +28,8 @@ public class TestObjects {
         company.setCreatedAt(new java.util.Date());
         company.setUpdatedAt(new java.util.Date());
         company.setId(1L);
+        company.setPhone(12345678);
+        company.setEmail("testIT@test.dk");
         return company;
     }
 }

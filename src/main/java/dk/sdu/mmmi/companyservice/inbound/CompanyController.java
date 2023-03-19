@@ -1,12 +1,8 @@
 package dk.sdu.mmmi.companyservice.inbound;
 
-import dk.sdu.mmmi.companyservice.service.interfaces.AuthenticationService;
 import dk.sdu.mmmi.companyservice.service.interfaces.CompanyService;
-import dk.sdu.mmmi.companyservice.service.interfaces.JobService;
 import dk.sdu.mmmi.companyservice.service.model.Company;
 import dk.sdu.mmmi.companyservice.service.model.Job;
-import dk.sdu.mmmi.companyservice.service.model.LoginRequest;
-import dk.sdu.mmmi.companyservice.service.model.LogoutRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,10 +19,6 @@ import java.util.List;
 public class CompanyController {
     private final CompanyService companyService;
 
-    private final JobService jobService;
-
-    private final AuthenticationService authenticationService;
-
     @GetMapping("/{id}")
     public ResponseEntity<Company> getCompany(@PathVariable("id") long id) {
         log.info("Get company: " + id);
@@ -35,7 +27,7 @@ public class CompanyController {
         if (company == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        company.setJobs(new HashSet<>(jobService.getJobsByCompanyId(id)));
+        company.setJobs(new HashSet<>(companyService.getJobsByCompanyId(id)));
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
@@ -47,7 +39,7 @@ public class CompanyController {
         if (company == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        List<Job> jobList = jobService.getJobsByCompanyId(company.getId());
+        List<Job> jobList = companyService.getJobsByCompanyId(company.getId());
         if(jobList == null || jobList.isEmpty())
             company.setJobs(new HashSet<>());
         else
@@ -55,24 +47,23 @@ public class CompanyController {
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
+    @PutMapping("/byEmail/{email}")
+    public ResponseEntity<Void> updateCompany(@PathVariable("email") String email, @RequestBody Company company) {
+        log.info("Update company: " + email);
+        Company originalCompany = companyService.findByEmail(email);
+
+        if (originalCompany == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        companyService.update(originalCompany.getId(), company);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("/register")
     public void registerCompany(@RequestBody Company company) {
         log.info("Company registered: " + company);
         companyService.create(company);
     }
-
-    @PostMapping("/login")
-    public void login(@RequestBody LoginRequest loginRequest) {
-        log.info("Company logged in: " + loginRequest);
-        authenticationService.login(loginRequest);
-    }
-
-    @PostMapping("/logout")
-    public void logout(@RequestBody LogoutRequest logoutRequest) {
-        log.info("Company logged out: " + logoutRequest);
-        authenticationService.logout(logoutRequest);
-    }
-
 
     @PutMapping("/{id}")
     public void updateCompany(@RequestBody Company company, @PathVariable Long id) {
