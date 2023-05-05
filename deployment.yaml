@@ -37,13 +37,22 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_USERNAME
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: databasesecrets
+                  key: username
             - name: SPRING_DATASOURCE_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: databasesecrets
+                  key: password
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://database-company-service:5432/postgres
+              valueFrom:
+                secretKeyRef:
+                  name: databasesecrets
+                  key: connection-string-company-service
             - name: POSTGRES_DB
-              value: postgres
+              value: database-company-service
             - name: POSTGRES_HOST
               value: postgres
             - name: URL_JOBSERVICE
@@ -52,81 +61,11 @@ spec:
               value: http://authentication-service:3000
           resources:
             limits:  
-              cpu: "500m"
+              cpu: "250m"
               memory: "500Mi"
             requests:  
-              cpu: "500m"
+              cpu: "250m"
               memory: "500Mi"
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: database-company-service
-spec:
-  serviceName: database-company-service
-  replicas: 1
-  selector:
-    matchLabels:
-      app: database-company-service
-  template:
-    metadata:
-      labels:
-        app: database-company-service
-    spec:
-      terminationGracePeriodSeconds: 10
-      containers:
-        - name: postgres
-          image: postgres:latest
-          volumeMounts:
-            - name: postgresql-initdb-company
-              mountPath: /docker-entrypoint-initdb.d
-            - name: postgres-persistent-storage-company
-              mountPath: /data
-          env:
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              value: password
-            - name: POSTGRES_DB
-              value: postgres
-            - name: PGDATA
-              value: /data/pgdata
-          ports:
-            - containerPort: 5432
-          resources:
-            limits:  
-              cpu: "500m"
-              memory: "500Mi"
-            requests:  
-              cpu: "500m"
-              memory: "500Mi"
-      volumes:
-        - name: postgresql-initdb-company
-          configMap:
-            name: postgresql-initdb-config-company
-  volumeClaimTemplates:
-  - metadata:
-      name: postgres-persistent-storage-company
-      annotations:
-        volume.beta.kubernetes.io/storage-class: "standard"
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 500Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: database-company-service
-spec:
-  selector:
-    app: database-company-service
-  ports:
-    - name: http
-      port: 5432
-      targetPort: 5432
-  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
