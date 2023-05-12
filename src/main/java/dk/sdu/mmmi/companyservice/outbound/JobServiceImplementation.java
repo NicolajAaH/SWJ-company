@@ -72,7 +72,7 @@ public class JobServiceImplementation implements JobService {
         ResponseEntity<Job[]> response = restTemplate.getForEntity(JOB_SERVICE_URL + "/companies/" + id, Job[].class);
         if(!response.getStatusCode().is2xxSuccessful()){
             log.error("Error getting jobs: {}", response.getStatusCode());
-            return null;
+            return Collections.emptyList();
         }
 
         if(response.getBody() == null || response.getBody().length == 0)

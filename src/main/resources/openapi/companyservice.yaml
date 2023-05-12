@@ -43,6 +43,10 @@ paths:
       responses:
         "200":
           description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
   /api/companies/byEmail/{email}:
     get:
       summary: "GET api/companies/byEmail/{email}"
@@ -95,6 +99,10 @@ paths:
       responses:
         "200":
           description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
 components:
   schemas:
     HttpHeaders:
