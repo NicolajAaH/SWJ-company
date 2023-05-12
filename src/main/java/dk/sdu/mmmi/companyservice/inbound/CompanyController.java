@@ -19,6 +19,11 @@ import java.util.List;
 public class CompanyController {
     private final CompanyService companyService;
 
+    /**
+     * Get company by id
+     * @param id company id
+     * @return the found company wrapped in a ResponseEntity
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Company> getCompany(@PathVariable("id") long id) {
         log.info("Get company: " + id);
@@ -31,6 +36,11 @@ public class CompanyController {
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
+    /**
+     * Get company by email
+     * @param email company email
+     * @return the found company wrapped in a ResponseEntity
+     */
     @GetMapping("/byEmail/{email}")
     public ResponseEntity<Company> getCompany(@PathVariable("email") String email) {
         log.info("Get company: " + email);
@@ -47,6 +57,12 @@ public class CompanyController {
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
+    /**
+     * Get all companies
+     * @param email company email
+     * @param company the company to update
+     * @return OK if the company was updated, NOT_FOUND if the company was not found
+     */
     @PutMapping("/byEmail/{email}")
     public ResponseEntity<Void> updateCompany(@PathVariable("email") String email, @RequestBody Company company) {
         log.info("Update company: " + email);
@@ -59,15 +75,28 @@ public class CompanyController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Register a company
+     * @param company the company to create
+     * @return the created company wrapped in a ResponseEntity
+     */
     @PostMapping("/register")
-    public void registerCompany(@RequestBody Company company) {
+    public ResponseEntity<Company> registerCompany(@RequestBody Company company) {
         log.info("Company registered: " + company);
-        companyService.create(company);
+        Company createdCompany = companyService.create(company);
+        return new ResponseEntity<>(createdCompany, HttpStatus.CREATED);
     }
 
+    /**
+     * Update a company by id
+     * @param company the company to update
+     * @param id company id
+     * @return OK if the company was updated, NOT_FOUND if the company was not found
+     */
     @PutMapping("/{id}")
-    public void updateCompany(@RequestBody Company company, @PathVariable Long id) {
+    public ResponseEntity<Company> updateCompany(@RequestBody Company company, @PathVariable Long id) {
         log.info("Company updated: " + company);
-        companyService.update(id, company);
+        Company updatedCompany = companyService.update(id, company);
+        return new ResponseEntity<>(updatedCompany, HttpStatus.OK);
     }
 }

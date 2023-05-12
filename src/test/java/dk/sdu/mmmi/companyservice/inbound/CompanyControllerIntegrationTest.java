@@ -68,7 +68,7 @@ public class CompanyControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/companies/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(TestObjects.createMockCompany())))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
     @Test

@@ -6,59 +6,24 @@ info:
 servers:
   - url: "https://companyservice"
 paths:
-  /api/companies/register:
-    post:
-      summary: "POST api/companies/register"
-      operationId: "registerCompany"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Company"
-        required: true
-      responses:
-        "200":
-          description: "OK"
-  /api/companies/login:
-    post:
-      summary: "POST api/companies/login"
-      operationId: "login"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LoginRequest"
-        required: true
-      responses:
-        "200":
-          description: "OK"
-  /api/companies/logout:
-    post:
-      summary: "POST api/companies/logout"
-      operationId: "logout"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LogoutRequest"
-        required: true
-      responses:
-        "200":
-          description: "OK"
-  /api/companies/postjob:
-    post:
-      summary: "POST api/companies/postjob"
-      operationId: "postJob"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Job"
-        required: true
-      responses:
-        "200":
-          description: "OK"
   /api/companies/{id}:
+    get:
+      summary: "GET api/companies/{id}"
+      operationId: "getCompany"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
     put:
       summary: "PUT api/companies/{id}"
       operationId: "updateCompany"
@@ -78,38 +43,76 @@ paths:
       responses:
         "200":
           description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
+  /api/companies/byEmail/{email}:
+    get:
+      summary: "GET api/companies/byEmail/{email}"
+      operationId: "getCompany"
+      parameters:
+        - name: "email"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
+    put:
+      summary: "PUT api/companies/byEmail/{email}"
+      operationId: "updateCompany"
+      parameters:
+        - name: "email"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Company"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
+  /api/companies/register:
+    post:
+      summary: "POST api/companies/register"
+      operationId: "registerCompany"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Company"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
 components:
   schemas:
-    Company:
+    HttpHeaders:
+      type: "object"
+      properties: { }
+    ResponseEntity:
       type: "object"
       properties:
-        id:
-          type: "integer"
-          format: "int64"
-        name:
-          type: "string"
-        email:
-          type: "string"
-        website:
-          type: "string"
-        createdAt:
-          type: "string"
-          format: "date-time"
-        updatedAt:
-          type: "string"
-          format: "date-time"
-    LoginRequest:
-      type: "object"
-      properties:
-        email:
-          type: "string"
-        password:
-          type: "string"
-    LogoutRequest:
-      type: "object"
-      properties:
-        token:
-          type: "string"
+        headers:
+          $ref: "#/components/schemas/HttpHeaders"
     Job:
       type: "object"
       properties:
@@ -147,3 +150,28 @@ components:
           format: "date-time"
         company:
           $ref: "#/components/schemas/Company"
+    Company:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        email:
+          type: "string"
+        website:
+          type: "string"
+        phone:
+          type: "integer"
+          format: "int32"
+        createdAt:
+          type: "string"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+        jobs:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Job"
